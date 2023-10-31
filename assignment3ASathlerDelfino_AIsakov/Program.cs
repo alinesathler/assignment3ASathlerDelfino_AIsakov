@@ -1,27 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-//Aline Sathler Delfino - Assignment 3
+//Aline Sathler Delfino & Ana Isakov - Assignment 3
 //Name of Project: Rock, Paper, Scissors (RPS) Tournament
 //Purpose: C# console application of a tournament of Rock, Paper, Scissors
 //Revision History:
 //REV00 - 2023/10/26 - Initial version
 //REV01 - 2023/10/30 - Adding tie Break
+//REV02 - 2023/10/31 - Goodbye message, number of games bigger than 0, generic exception, switch statement, changing globals variables to class variables, manipulating exceptions to not close the program
 
 namespace assignment3ASathlerDelfino_AIsakov {
-    //Global Variables
-    public static class Globals {
-        public static uint playerWins = 0, computerWins = 0;
-    }
-    internal class Program {
-        
 
-        //Player choose its draw
+    internal class Program {
+        //Class variables
+        public static uint playerWins = 0, computerWins = 0;
+
+        //Method player choose its draw
         static uint PlayerPlays() {
             uint playerChoice;
 
@@ -42,32 +43,36 @@ namespace assignment3ASathlerDelfino_AIsakov {
 
         }
 
-        //Computer draw is selected randomly
+        //Method computer draw is selected randomly
         static uint ComputerPlays() {
             Random rand = new Random();
 
-            uint computerChoice = (uint) rand.Next(1, 4);
+            uint computerChoice = (uint)rand.Next(1, 4);
 
             return computerChoice;
 
         }
 
-        //Interpretating players choices
+        //Method interpretating players choices
         static string WriteChoices(string player, uint choice) {
             string prompt = "";
 
-            if (choice == 1) {
-                prompt = player + " chose Rock.";
-            } else if (choice == 2) {
-                prompt = player + " chose Paper.";
-            } else if (choice == 3) {
-                prompt = player + " chose Scissors.";
+            switch (choice) {
+                case 1:
+                    prompt = player + " chose Rock.";
+                    break;
+                case 2:
+                    prompt = player + " chose Paper.";
+                    break;
+                case 3:
+                    prompt = player + " chose Scissors.";
+                    break;
             }
 
             return prompt;
         }
 
-        //Checking winner game
+        //Method checking winner game
         static string WinnerGame(uint playerChoice, uint computerChoice) {
             string winner = "";
             if (playerChoice == computerChoice) {
@@ -80,13 +85,13 @@ namespace assignment3ASathlerDelfino_AIsakov {
             return winner;
         }
 
-        //Checking winner series
-        static void WinnerSeries () {
+        //Method checking winner series
+        static void WinnerSeries() {
             //Showing the winner of the series
-            if (Globals.playerWins > Globals.computerWins) {
-                Console.WriteLine("\nCongrats Player Wins the Series!!\n");
-            } else if (Globals.playerWins < Globals.computerWins) {
-                Console.WriteLine("\nComputer Wins the Series.\n");
+            if (playerWins > computerWins) {
+                Console.WriteLine("\nCongrats Player Wins the Series!!");
+            } else if (playerWins < computerWins) {
+                Console.WriteLine("\nComputer Wins the Series.");
             } else {
                 Console.WriteLine("\nSeries ended in a draw.");
                 //Tie Breaker game
@@ -94,8 +99,8 @@ namespace assignment3ASathlerDelfino_AIsakov {
             }
         }
 
-        
-        //Game
+
+        //Method game
         static void Game() {
             uint computerChoice, playerChoice;
             string winner;
@@ -115,25 +120,25 @@ namespace assignment3ASathlerDelfino_AIsakov {
 
             //Adding the win for the winner
             if (winner == "Player Wins") {
-                Globals.playerWins++;
+                playerWins++;
             } else if (winner == "Computer Wins") {
-                Globals.computerWins++;
+                computerWins++;
             }
 
             //Displaying the result of consecutive games
             Console.WriteLine("\nStandings:");
-            Console.WriteLine("Player Wins: " + Globals.playerWins);
-            Console.WriteLine("Computer Wins: " + Globals.computerWins);
+            Console.WriteLine("Player Wins: " + playerWins);
+            Console.WriteLine("Computer Wins: " + computerWins);
         }
 
-        //Tie Breaker
+        //Method tie Breaker
         static void TieBreaker() {
             bool isDraw = true;
             do {
                 Console.WriteLine("\n\nTIE BREAKER");
                 Game();
 
-                if (Globals.playerWins != Globals.computerWins) {
+                if (playerWins != computerWins) {
                     isDraw = false;
                 }
             } while (isDraw);
@@ -143,7 +148,7 @@ namespace assignment3ASathlerDelfino_AIsakov {
 
         static void Main() {
             uint games;
-            
+
             Console.WriteLine("Welcome to Rock, Paper, Scissors Tournament!");
             Console.WriteLine("How many games would you like to play?");
 
@@ -153,22 +158,37 @@ namespace assignment3ASathlerDelfino_AIsakov {
                 games = Convert.ToUInt16(Console.ReadLine());
                 Console.ResetColor();
 
-                //Loop for running for the quantity of games
-                for (int i = 0; i < games; i++)
-                {
-                    //Method that controls the game
-                    Game();
+                //Only execute if number of games > 0
+                if (games > 0) {
+                    //Loop for running for the quantity of games
+                    for (int i = 0; i < games; i++) {
+                        //Method that controls the game
+                        Game();
+                    }
+
+                    //Checking who wins the series
+                    WinnerSeries();
                 }
 
-                //Checking who wins the series
-                WinnerSeries();
-
-            } catch (FormatException) {
-                Console.WriteLine("Invalid input.");
             } catch (ArgumentOutOfRangeException) {
-                Console.WriteLine("Invalid menu.");
+                Console.ResetColor();
+                Console.WriteLine("Invalid menu. Please enter a number between 1-3.");
+                PlayerPlays();
+            } catch (FormatException) {
+                Console.ResetColor();
+                Console.WriteLine("Invalid input. Please, try again.\n");
+                Main();
+            }  catch (OverflowException) {
+                Console.ResetColor();
+                Console.WriteLine("Invalid input. Please, try again.\n");
+                Main();
+            } catch (Exception) {
+                Console.ResetColor();
+                Console.WriteLine("Something went wrong. Please, try again.\n");
+                Main();
             } finally {
                 Console.ResetColor();
+                Console.WriteLine("\nGoodbye!!!\n");
             }
         }
     }
