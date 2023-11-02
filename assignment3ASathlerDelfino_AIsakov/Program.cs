@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 //REV00 - 2023/10/26 - Initial version
 //REV01 - 2023/10/30 - Adding tie Break
 //REV02 - 2023/10/31 - Goodbye message, number of games bigger than 0, generic exception, switch statement, changing globals variables to class variables, manipulating exceptions to not close the program
+//REV03 - 2023/11/01 - Undoing the manipulation of exceptions to not close the program: Space and Time Complexity
 
 namespace assignment3ASathlerDelfino_AIsakov {
 
@@ -172,22 +173,17 @@ namespace assignment3ASathlerDelfino_AIsakov {
 
             } catch (ArgumentOutOfRangeException) {
                 Console.ResetColor();
-                Console.WriteLine("Invalid menu. Please enter a number between 1-3.");
-                PlayerPlays();
+                Console.WriteLine("Invalid menu.");
             } catch (FormatException) {
                 Console.ResetColor();
-                Console.WriteLine("Invalid input. Please, try again.\n");
-                Main();
+                Console.WriteLine("Invalid input.");
             }  catch (OverflowException) {
                 Console.ResetColor();
-                Console.WriteLine("Invalid input. Please, try again.\n");
-                Main();
+                Console.WriteLine("Invalid input.");
             } catch (Exception) {
                 Console.ResetColor();
-                Console.WriteLine("Something went wrong. Please, try again.\n");
-                Main();
+                Console.WriteLine("Something went wrong.");
             } finally {
-                Console.ResetColor();
                 Console.WriteLine("\nGoodbye!!!\n");
             }
         }
